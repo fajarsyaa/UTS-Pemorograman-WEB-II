@@ -52,7 +52,7 @@ require 'crud.php';
                         <td><?= $barang['status_barang'] == 1 ? 'Available' : 'Not-Available' ?></td>
                         <td>
                             <div class="row">
-                                <button class="btn btn-success" data-toggle="modal" data-target="#restock">restock</button>
+                                <button class="btn btn-success formRestock" data-toggle="modal" data-target="#restock">restock</button>
                                 <button class="btn btn-warning  mx-2 formEdit" data-toggle="modal">edit</button>
                                 <form action="http://localhost/tugas_pweb_2/crud.php" method="post" id="formDelete">
                                     <input type="hidden" name="idDelete" value="<?= $barang['id'] ?>">
@@ -91,8 +91,8 @@ require 'crud.php';
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="http://localhost/tugas_pweb_2/crud.php" id="formAdd">
-                    <input type="hidden" name="addData" value="ya">
+                <form method="post" action="http://localhost/tugas_pweb_2/crud.php" id="formAddData">
+                    <input type="hidden" name="addData" value="addData">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="kode">Kode Barang</label>
@@ -118,14 +118,7 @@ require 'crud.php';
                         <div class="form-group">
                             <label for="harga">Harga Beli</label>
                             <input type="number" class="form-control" id="harga" name="harga">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status Barang</label>
-                            <select class="form-control" id="status" name="status">
-                                <option value="1">Available</option>
-                                <option value="0">Not-Available</option>
-                            </select>
-                        </div>
+                        </div>                      
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -137,7 +130,7 @@ require 'crud.php';
     </div>
 
     <!-- Modal Edit -->
-    <div class="modal fade" id="formEdit" tabindex="-1" role="dialog" aria-labelledby="formEdit" aria-hidden="true">
+    <div class="modal fade" id="formEditModal" tabindex="-1" role="dialog" aria-labelledby="formEdit" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -146,8 +139,8 @@ require 'crud.php';
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="http://localhost/tugas_pweb_2/crud.php">
-                    <input type="hidden" id="idEdit" name="id">
+                <form method="post" action="http://localhost/tugas_pweb_2/crud.php" id="formEditBarang">                     
+                    <input type="hidden" id="idEdit" name="idedit">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="kode">Kode Barang</label>
@@ -173,14 +166,7 @@ require 'crud.php';
                         <div class="form-group">
                             <label for="harga">Harga Beli</label>
                             <input type="number" class="form-control" id="hargaEdit" name="harga">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status Barang</label>
-                            <select class="form-control" id="status" name="statusEdit">
-                                <option value="Available">Available</option>
-                                <option value="Not-Available">Not-Available</option>
-                            </select>
-                        </div>
+                        </div>                    
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary closeButton" data-dismiss="modal">Close</button>
@@ -201,15 +187,16 @@ require 'crud.php';
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="http://localhost/tugas_pweb_2/crud.php">
+                <form method="post" action="http://localhost/tugas_pweb_2/crud.php" id="formSubmitRestock">
+                    <input type="hidden" name="restockID" id="idRestock">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="nama">Nama Barang</label>
-                            <input type="text" class="form-control" id="nama" value="barang A" readonly>
+                            <input type="text" class="form-control" id="namaRestock" name="nama" value="barang A" readonly>
                         </div>
                         <div class="form-group">
                             <label for="jumlah">Jumlah Barang</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah">
+                            <input type="number" class="form-control" id="jumlahRestock" name="jumlah">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -272,9 +259,8 @@ require 'crud.php';
                 $.ajax({
                     url: 'http://localhost/tugas_pweb_2/crud.php',
                     type: 'POST',
-                    data: $('#formAdd').serialize(),
-                    success: function(response) {
-                        console.log(response);
+                    data: $('#formAddData').serialize(),
+                    success: function(response) {                       
                         alert('Data berhasil ditambahkan!');
                         window.location.reload();
                     },
@@ -346,8 +332,7 @@ require 'crud.php';
 
             $('.formEdit').on('click', function() {
                 // Ambil id dari data yang di-klik
-                var idEdit = $(this).closest('tr').find('td:first').text();
-                
+                var idEdit = $(this).closest('tr').find('td:first').text();                
                 $.ajax({
                     url: 'http://localhost/tugas_pweb_2/crud.php',
                     type: 'POST',
@@ -371,7 +356,7 @@ require 'crud.php';
                             return $(this).text() === item.satuan_barang;
                         }).prop('selected', true);
 
-                        $('#formEdit').modal('show');                        
+                        $('#formEditModal').modal('show');                        
                     },
                     error: function(xhr, status, error) {
                         console.error(xhr.responseText);
@@ -379,9 +364,62 @@ require 'crud.php';
                 });
             });
 
+            $('#submitEdit').click(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: 'http://localhost/tugas_pweb_2/crud.php',
+                    type: 'POST',
+                    data: $('#formEditBarang').serialize(),
+                    success: function(response) {                                                
+                        alert(response);
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            $('.formRestock').on('click', function() {
+                // Ambil id dari data yang di-klik
+                var idEdit = $(this).closest('tr').find('td:first').text();                
+                $.ajax({
+                    url: 'http://localhost/tugas_pweb_2/crud.php',
+                    type: 'POST',
+                    data: {
+                        fetchItems: true,
+                        idEdit: idEdit
+                    },
+                    success: function(response) {                                         
+                        var item = JSON.parse(response);
+                        $('#namaRestock').val(item.nama_barang);
+                        $('#jumlahRestock').val(item.jumlah_barang);
+                        $('#idRestock').val(item.id);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            $('#submitRestock').click(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: 'http://localhost/tugas_pweb_2/crud.php',
+                    type: 'POST',
+                    data: $('#formSubmitRestock').serialize(),
+                    success: function(response) {                                                
+                        alert(response);
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
 
             $('.closeButton').on('click', function() {
-                $('#formEdit').modal('hide');    
+                $('#formEditModal').modal('hide');    
             });
 
         });

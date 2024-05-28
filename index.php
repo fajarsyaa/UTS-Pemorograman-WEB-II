@@ -17,9 +17,12 @@ require 'crud.php';
         <div class="mt-2 mb-2">
             <h1 class="text-center">INVENTORY</h1>
         </div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#exampleModal">
+
+        <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#formAdd">
             Tambah Barang
+        </button>
+        <button type="button" class="btn btn-success mb-4" data-toggle="modal" data-target="#pakaiBarang">
+            Pakai Barang
         </button>
 
         <table id="example" class="table table-striped display" style="width:100%">
@@ -50,7 +53,7 @@ require 'crud.php';
                         <td>
                             <div class="row">
                                 <button class="btn btn-success" data-toggle="modal" data-target="#restock">restock</button>
-                                <button class="btn btn-warning  mx-2" data-toggle="modal" data-target="#formEdit">edit</button>
+                                <button class="btn btn-warning  mx-2 formEdit" data-toggle="modal">edit</button>
                                 <form action="http://localhost/tugas_pweb_2/crud.php" method="post" id="formDelete">
                                     <input type="hidden" name="idDelete" value="<?= $barang['id'] ?>">
                                     <button type="submit" class="deleteData btn btn-danger" name="delete">delete</button>
@@ -79,7 +82,7 @@ require 'crud.php';
     </div>
 
     <!-- Modal Add -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="formAdd" tabindex="-1" role="dialog" aria-labelledby="formAdd" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -139,27 +142,28 @@ require 'crud.php';
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Form Edit Barang</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close closeButton" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <form method="post" action="http://localhost/tugas_pweb_2/crud.php">
+                    <input type="hidden" id="idEdit" name="id">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="kode">Kode Barang</label>
-                            <input type="text" class="form-control" id="kode" name="kode">
+                            <input type="text" class="form-control" id="kodeEdit" name="kode">
                         </div>
                         <div class="form-group">
                             <label for="nama">Nama Barang</label>
-                            <input type="text" class="form-control" id="nama" name="nama">
+                            <input type="text" class="form-control" id="namaEdit" name="nama">
                         </div>
                         <div class="form-group">
                             <label for="jumlah">Jumlah Barang</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah">
+                            <input type="number" class="form-control" id="jumlahEdit" name="jumlah">
                         </div>
                         <div class="form-group">
                             <label for="satuan">Satuan Barang</label>
-                            <select class="form-control" id="satuan" name="satuan">
+                            <select class="form-control" id="satuanEdit" name="satuan">
                                 <option value="Kg">Kg</option>
                                 <option value="Pcs">Pcs</option>
                                 <option value="Liter">Liter</option>
@@ -168,18 +172,18 @@ require 'crud.php';
                         </div>
                         <div class="form-group">
                             <label for="harga">Harga Beli</label>
-                            <input type="number" class="form-control" id="harga" name="harga">
+                            <input type="number" class="form-control" id="hargaEdit" name="harga">
                         </div>
                         <div class="form-group">
                             <label for="status">Status Barang</label>
-                            <select class="form-control" id="status" name="status">
+                            <select class="form-control" id="status" name="statusEdit">
                                 <option value="Available">Available</option>
                                 <option value="Not-Available">Not-Available</option>
                             </select>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary closeButton" data-dismiss="modal">Close</button>
                         <button type="submit" id="submitEdit" name="update" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
@@ -217,6 +221,40 @@ require 'crud.php';
         </div>
     </div>
 
+    <!-- Modal Pakai Barang -->
+    <div class="modal fade" id="pakaiBarang" tabindex="-1" role="dialog" aria-labelledby="pakaiBarang" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Pakai Barang</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="http://localhost/tugas_pweb_2/crud.php" id="formPakaiBarang">
+                    <input type="hidden" name="pakaiBarang" value="ya">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="itemSelect">Pilih Barang</label>
+                            <select class="form-control" id="itemSelect" name="barangId">
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jumlahPakai">Jumlah Barang</label>
+                            <input type="number" class="form-control" id="jumlahPakai" name="jumlah_pakai">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id="submitPakaiBarang" name="pakai" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -226,7 +264,7 @@ require 'crud.php';
     <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.js"></script>
     <script>
-        $(document).ready(function() {
+        $(function() {
             $('#example').DataTable();
 
             $('#subbmitAddData').click(function(e) {
@@ -251,7 +289,7 @@ require 'crud.php';
                 $.ajax({
                     url: 'http://localhost/tugas_pweb_2/crud.php',
                     type: 'POST',
-                    data: $('#formDelete').serialize(),
+                    data: $(this).closest('form').serialize(),
                     success: function(response) {
                         console.log(response);
                         alert('Data berhasil dihapus!');
@@ -262,6 +300,90 @@ require 'crud.php';
                     }
                 });
             });
+
+            $('#pakaiBarang').on('click', function() {
+                var selectedItem = $('#itemSelect').val();
+
+                $.ajax({
+                    url: 'http://localhost/tugas_pweb_2/crud.php',
+                    type: 'POST',
+                    data: {
+                        fetchAllItems: true
+                    },
+                    success: function(response) {
+                        var items = JSON.parse(response);
+                        var $select = $('#itemSelect');
+                        $select.empty();
+                        items.forEach(function(item) {
+                            $select.append('<option value="' + item.id + '">' + item.nama_barang + '</option>');
+                        });
+
+                        if (selectedItem) {
+                            $select.val(selectedItem);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            $('#submitPakaiBarang').click(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: 'http://localhost/tugas_pweb_2/crud.php',
+                    type: 'POST',
+                    data: $('#formPakaiBarang').serialize(),
+                    success: function(response) {
+                        alert(response);
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            $('.formEdit').on('click', function() {
+                // Ambil id dari data yang di-klik
+                var idEdit = $(this).closest('tr').find('td:first').text();
+                
+                $.ajax({
+                    url: 'http://localhost/tugas_pweb_2/crud.php',
+                    type: 'POST',
+                    data: {
+                        fetchItems: true,
+                        idEdit: idEdit
+                    },
+                    success: function(response) {  
+                        console.log(response);                      
+                        var item = JSON.parse(response);
+                        
+                        $('#idEdit').val(item.id);
+                        $('#kodeEdit').val(item.kode_barang);
+                        $('#namaEdit').val(item.nama_barang);
+                        $('#jumlahEdit').val(item.jumlah_barang);
+                        $('#hargaEdit').val(item.harga_beli);
+                        $('#statusEdit').val(item.status_barang);
+
+                        var Options = $('#satuanEdit').find('option');
+                        Options.filter(function() {
+                            return $(this).text() === item.satuan_barang;
+                        }).prop('selected', true);
+
+                        $('#formEdit').modal('show');                        
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+
+            $('.closeButton').on('click', function() {
+                $('#formEdit').modal('hide');    
+            });
+
         });
     </script>
 </body>
